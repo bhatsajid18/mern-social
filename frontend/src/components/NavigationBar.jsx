@@ -8,82 +8,63 @@ import {
   IoChatbubbleEllipsesOutline,
 } from "react-icons/io5";
 import { RiAccountCircleFill, RiAccountCircleLine } from "react-icons/ri";
-
 const NavigationBar = () => {
   const [tab, setTab] = useState(window.location.pathname);
+  const navItems = [
+    {
+      path: "/",
+      name: "Home",
+      icon: tab === "/" ? <AiFillHome /> : <AiOutlineHome />,
+    },
+    {
+      path: "/reels",
+      name: "Reels",
+      icon: tab === "/reels" ? <BsCameraReelsFill /> : <BsCameraReels />,
+    },
+    {
+      path: "/search",
+      name: "Search",
+      icon: tab === "/search" ? <IoSearchCircle /> : <IoSearchCircleOutline />,
+    },
+    {
+      path: "/chat",
+      name: "Chat",
+      icon:
+        tab === "/chat" ? (
+          <IoChatbubbleEllipses />
+        ) : (
+          <IoChatbubbleEllipsesOutline />
+        ),
+    },
+    {
+      path: "/account",
+      name: "Account",
+      icon:
+        tab === "/account" ? <RiAccountCircleFill /> : <RiAccountCircleLine />,
+    },
+  ];
 
   return (
-    <div className="fixed bottom-0 w-full bg-white py-3 shadow-lg rounded-t-lg">
-      <div className="flex justify-around">
-        <Link
-          to={"/"}
-          onClick={() => setTab("/")}
-          className={`flex flex-col items-center text-2xl p-2 transition duration-300 ${
-            tab === "/" ? "text-blue-500" : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <span>{tab === "/" ? <AiFillHome /> : <AiOutlineHome />}</span>
-        </Link>
-        <Link
-          to={"/reels"}
-          onClick={() => setTab("/reels")}
-          className={`flex flex-col items-center text-2xl p-2 transition duration-300 ${
-            tab === "/reels"
-              ? "text-blue-500"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <span>
-            {tab === "/reels" ? <BsCameraReelsFill /> : <BsCameraReels />}
-          </span>
-        </Link>
-        <Link
-          to={"/search"}
-          onClick={() => setTab("/search")}
-          className={`flex flex-col items-center text-2xl p-2 transition duration-300 ${
-            tab === "/search"
-              ? "text-blue-500"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <span>
-            {tab === "/search" ? <IoSearchCircle /> : <IoSearchCircleOutline />}
-          </span>
-        </Link>
-        <Link
-          to={"/chat"}
-          onClick={() => setTab("/chat")}
-          className={`flex flex-col items-center text-2xl p-2 transition duration-300 ${
-            tab === "/chat"
-              ? "text-blue-500"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <span>
-            {tab === "/chat" ? (
-              <IoChatbubbleEllipses />
-            ) : (
-              <IoChatbubbleEllipsesOutline />
-            )}
-          </span>
-        </Link>
-        <Link
-          to={"/account"}
-          onClick={() => setTab("/account")}
-          className={`flex flex-col items-center text-2xl p-2 transition duration-300 ${
-            tab === "/account"
-              ? "text-blue-500"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          <span>
-            {tab === "/account" ? (
-              <RiAccountCircleFill />
-            ) : (
-              <RiAccountCircleLine />
-            )}
-          </span>
-        </Link>
+    <div className="fixed left-0 top-0 h-full w-48 bg-white shadow-lg  md:block">
+      <div className="p-6 flex flex-col h-full">
+        <h1 className="text-xl font-bold text-gray-800 mb-8">Navigation</h1>
+        <div className="flex flex-col space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setTab(item.path)}
+              className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                tab === item.path
+                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <span className="text-2xl">{item.icon}</span>
+              <span className="font-medium">{item.name}</span>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

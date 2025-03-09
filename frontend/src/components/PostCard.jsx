@@ -1,88 +1,90 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsChatFill, BsThreeDotsVertical } from "react-icons/bs";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
 import { UserData } from "../context/UserContext";
 import { PostData } from "../context/PostContext";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-import { MdDelete } from "react-icons/md";
 import SimpleModal from "./SimpleModal";
 import { LoadingAnimation } from "./Loading";
+import LikeModal from "./LikeModal";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import axios from "axios";
-import LikeModal from "./LikeModal";
 
-const PostCard = ({ type, value }) => {
+const PostCard = ({ type, value, isPlaying }) => {
   const [isLike, setIsLike] = useState(false);
   const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [caption, setCaption] = useState(value.caption || "");
+  const [captionLoading, setCaptionLoading] = useState(false);
+  const [comment, setComment] = useState("");
+
   const { user } = UserData();
   const { likePost, addComment, deletePost, loading, fetchPosts } = PostData();
 
   const formatDate = format(new Date(value.createdAt), "MMMM do");
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    for (let i = 0; i < value.likes.length; i++) {
-      if (value.likes[i] === user._id) setIsLike(true);
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current
+          .play()
+          .catch((error) => console.error("Playback error", error));
+      } else {
+        videoRef.current.pause();
+      }
     }
-  }, [value, user._id]);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    setIsLike(value.likes.includes(user._id));
+  }, [value.likes, user._id]);
 
   const likeHandler = () => {
     setIsLike(!isLike);
-
     likePost(value._id);
   };
-
-  const [comment, setComment] = useState("");
 
   const addCommentHandler = (e) => {
     e.preventDefault();
     addComment(value._id, comment, setComment, setShow);
   };
 
-  const [showModal, setShowModal] = useState(false);
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   const deleteHandler = () => {
     deletePost(value._id);
   };
 
-  const [showInput, setShowInput] = useState(false);
   const editHandler = () => {
     setShowModal(false);
     setShowInput(true);
   };
 
-  const [caption, setCaption] = useState(value.caption ? value.caption : "");
-  const [captionLoading, setCaptionLoading] = useState(false);
-
   async function updateCaption() {
     setCaptionLoading(true);
     try {
-      const { data } = await axios.put("/api/post/" + value._id, { caption });
-
+      const { data } = await axios.put(`/api/post/${value._id}`, { caption });
       toast.success(data.message);
       fetchPosts();
       setShowInput(false);
-      setCaptionLoading(false);
     } catch (error) {
       toast.error(error.response.data.message);
-      setCaptionLoading(false);
     }
+    setCaptionLoading(false);
   }
-
-  const [open, setOpen] = useState(false);
-
-  const oncloseLIke = () => {
-    setOpen(false);
-  };
 
   return (
     <div className="bg-gray-100 flex items-center justify-center pt-3 pb-14">
-      <SimpleModal isOpen={showModal} onClose={closeModal}>
-        <LikeModal isOpen={open} onClose={oncloseLIke} id={value._id} />
+      <SimpleModal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <LikeModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          id={value._id}
+        />
         <div className="flex flex-col items-center gap-3">
           <button
             onClick={editHandler}
@@ -170,10 +172,13 @@ const PostCard = ({ type, value }) => {
           ) : (
             <video
               src={value.post.url}
+              ref={videoRef}
               alt=""
-              className="w-[300px] h-[350px] max-md:h-[250px] object-cover rounded-md"
+              className="w-[400px] h-[500px] max-md:h-[250px] object-cover rounded-md"
               autoPlay
               controls
+              loop
+              // muted
             />
           )}
         </div>
@@ -240,8 +245,6 @@ const PostCard = ({ type, value }) => {
   );
 };
 
-export default PostCard;
-
 export const Comment = ({ value, user, owner, id }) => {
   const { deleteComment } = PostData();
 
@@ -282,3 +285,5 @@ export const Comment = ({ value, user, owner, id }) => {
     </div>
   );
 };
+
+export default PostCard;

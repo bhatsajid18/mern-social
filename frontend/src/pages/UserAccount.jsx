@@ -7,6 +7,8 @@ import axios from "axios";
 import { Loading } from "../components/Loading";
 import { UserData } from "../context/UserContext";
 import Modal from "../components/Modal";
+import { BsGrid3X3, BsPlayBtn } from "react-icons/bs";
+import { motion } from "framer-motion";
 
 const UserAccount = ({ user: loggedInUser }) => {
   const navigate = useNavigate();
@@ -102,133 +104,180 @@ const UserAccount = ({ user: loggedInUser }) => {
   useEffect(() => {
     followData();
   }, [user]);
+
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 ml-48">
       {loading ? (
         <Loading />
       ) : (
-        <>
-          {user && (
-            <>
-              <div className="bg-gray-100 min-h-screen flex flex-col gap-4 items-center justify-center pt-3 pb-14">
-                {show && (
-                  <Modal
-                    value={followersData}
-                    title={"Followers"}
-                    setShow={setShow}
+        user && (
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            {/* Profile Header */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                {/* Profile Image */}
+                <motion.div whileHover={{ scale: 1.02 }} className="relative">
+                  <img
+                    src={user.profilePic.url}
+                    alt={user.name}
+                    className="w-48 h-48 rounded-full object-cover ring-4 ring-gray-50 shadow-lg"
                   />
-                )}
-                {show1 && (
-                  <Modal
-                    value={followingsData}
-                    title={"Followings"}
-                    setShow={setShow1}
-                  />
-                )}
-                <div className="bg-white flex justify-between gap-4 p-8 rounded-lg shadow-md max-w-md">
-                  <div className="image flex flex-col justify-between mb-4 gap-4">
-                    <img
-                      src={user.profilePic.url}
-                      alt=""
-                      className="w-[180px] h-[180px] rounded-full"
-                    />
-                  </div>
+                </motion.div>
 
-                  <div className="flex flex-col gap-2">
-                    <p className="text-gray-800 font-semibold">{user.name}</p>
-                    <p className="text-gray-500 text-sm">{user.email}</p>
-                    <p className="text-gray-500 text-sm">{user.gender}</p>
-                    <p
-                      className="text-gray-500 text-sm cursor-pointer"
-                      onClick={() => setShow(true)}
-                    >
-                      {user.followers.length} follower
-                    </p>
-                    <p
-                      className="text-gray-500 text-sm cursor-pointer"
-                      onClick={() => setShow1(true)}
-                    >
-                      {user.followings.length} following
-                    </p>
-
-                    {user._id === loggedInUser._id ? (
-                      ""
-                    ) : (
-                      <button
+                {/* Profile Info */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {user.name}
+                    </h1>
+                    {user._id !== loggedInUser._id && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={followHandler}
-                        className={`py-2 px-5 text-white rounded-md ${
-                          followed ? "bg-red-500" : "bg-blue-400"
+                        className={`px-6 py-2 rounded-full font-medium transition-all ${
+                          followed
+                            ? "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
                         }`}
                       >
-                        {followed ? "UnFollow" : "Follow"}
-                      </button>
+                        {followed ? "Following" : "Follow"}
+                      </motion.button>
                     )}
                   </div>
-                </div>
-
-                <div className="controls flex justify-center items-center bg-white p-4 rounded-md gap-7">
-                  <button onClick={() => setType("post")}>Posts</button>
-                  <button onClick={() => setType("reel")}>Reels</button>
-                </div>
-
-                {type === "post" && (
-                  <>
-                    {myPosts && myPosts.length > 0 ? (
-                      myPosts.map((e) => (
-                        <PostCard type={"post"} value={e} key={e._id} />
-                      ))
-                    ) : (
-                      <p className="text-center text-gray-600 text-lg">
-                        No Post Yet
-                      </p>
-                    )}
-                  </>
-                )}
-                {type === "reel" && (
-                  <>
-                    {myReels && myReels.length > 0 ? (
-                      <div className="flex gap-3 justify-center items-center">
-                        <PostCard
-                          type={"reel"}
-                          value={myReels[index]}
-                          key={myReels[index]._id}
-                        />
-                        <div className="button flex flex-col justify-center items-center gap-6">
-                          {index === 0 ? (
-                            ""
-                          ) : (
-                            <button
-                              className="bg-gray-500 text-white py-5 px-5 rounded-full"
-                              onClick={prevReel}
-                            >
-                              <FaArrowUp />
-                            </button>
-                          )}
-                          {index === myReels.length - 1 ? (
-                            ""
-                          ) : (
-                            <button
-                              className="bg-gray-500 text-white py-5 px-5 rounded-full"
-                              onClick={nextReel}
-                            >
-                              <FaArrowDownLong />
-                            </button>
-                          )}
-                        </div>
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-8 mb-6">
+                    <div className="text-center p-4 rounded-xl bg-gray-50">
+                      <div className="text-xl font-bold text-gray-900">
+                        {myPosts?.length || 0}
                       </div>
-                    ) : (
-                      <p className="text-center text-gray-600 text-lg">
-                        No Reels Yet
-                      </p>
-                    )}
-                  </>
-                )}
+                      <div className="text-sm text-gray-500">Posts</div>
+                    </div>
+                    <div
+                      onClick={() => setShow(true)}
+                      className="text-center p-4 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="text-xl font-bold text-gray-900">
+                        {user.followers.length}
+                      </div>
+                      <div className="text-sm text-gray-500">Followers</div>
+                    </div>
+                    <div
+                      onClick={() => setShow1(true)}
+                      className="text-center p-4 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="text-xl font-bold text-gray-900">
+                        {user.followings.length}
+                      </div>
+                      <div className="text-sm text-gray-500">Following</div>
+                    </div>
+                  </div>
+
+                  {/* User Details */}
+                  <div className="space-y-2">
+                    <p className="text-gray-600">{user.email}</p>
+                    <p className="text-gray-600 capitalize">{user.gender}</p>
+                  </div>
+                </div>
               </div>
-            </>
-          )}
-        </>
+            </div>
+
+            {/* Content Tabs */}
+            <div className="bg-white rounded-2xl shadow-lg p-4 mb-8">
+              <div className="flex justify-center gap-8">
+                <button
+                  onClick={() => setType("post")}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
+                    type === "post"
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <BsGrid3X3 className="text-xl" />
+                  <span className="font-medium">Posts</span>
+                </button>
+                <button
+                  onClick={() => setType("reel")}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
+                    type === "reel"
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <BsPlayBtn className="text-xl" />
+                  <span className="font-medium">Reels</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Content Display */}
+            <div className="space-y-6">
+              {type === "post" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {myPosts && myPosts.length > 0 ? (
+                    myPosts.map((post) => (
+                      <motion.div
+                        key={post._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <PostCard type="post" value={post} />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-12 bg-white rounded-2xl shadow-lg">
+                      <p className="text-gray-500 text-lg">No posts yet</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  {myReels && myReels.length > 0 ? (
+                    <div className="flex items-center gap-6">
+                      <PostCard type="reel" value={myReels[index]} />
+                      <div className="flex flex-col gap-4">
+                        {index > 0 && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={prevReel}
+                            className="p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all"
+                          >
+                            <FaArrowUp className="text-gray-700" />
+                          </motion.button>
+                        )}
+                        {index < myReels.length - 1 && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={nextReel}
+                            className="p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all"
+                          >
+                            <FaArrowDownLong className="text-gray-700" />
+                          </motion.button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-white rounded-2xl shadow-lg w-full max-w-md">
+                      <p className="text-gray-500 text-lg">No reels yet</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )
       )}
-    </>
+
+      {/* Modals */}
+      {show && (
+        <Modal value={followersData} title="Followers" setShow={setShow} />
+      )}
+      {show1 && (
+        <Modal value={followingsData} title="Followings" setShow={setShow1} />
+      )}
+    </div>
   );
 };
 

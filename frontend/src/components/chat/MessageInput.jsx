@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { ChatData } from "../../context/ChatContext";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { IoSend } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 const MessageInput = ({ setMessages, selectedChat }) => {
   const [textMsg, setTextMsg] = useState("");
@@ -9,13 +11,15 @@ const MessageInput = ({ setMessages, selectedChat }) => {
 
   const handleMessage = async (e) => {
     e.preventDefault();
+    if (!textMsg.trim()) return;
+
     try {
       const { data } = await axios.post("/api/messages", {
         message: textMsg,
         recieverId: selectedChat.users[0]._id,
       });
 
-      setMessages((message) => [...message, data]);
+      setMessages((messages) => [...messages, data]);
       setTextMsg("");
       setChats((prev) => {
         const updatedChat = prev.map((chat) => {
@@ -28,10 +32,8 @@ const MessageInput = ({ setMessages, selectedChat }) => {
               },
             };
           }
-
           return chat;
         });
-
         return updatedChat;
       });
     } catch (error) {
@@ -39,23 +41,26 @@ const MessageInput = ({ setMessages, selectedChat }) => {
       toast.error(error.response.data.message);
     }
   };
+
   return (
-    <div className="p-3 bg-white border-t border-gray-300">
-      <form onSubmit={handleMessage} className="flex items-center gap-3">
+    <div className="p-4 bg-white border-t border-gray-100">
+      <form onSubmit={handleMessage} className="flex items-center gap-2">
         <input
           type="text"
-          placeholder="Enter Message"
-          className="border border-gray-300 rounded-full p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Type a message..."
+          className="flex-1 px-4 py-3 bg-gray-50 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           value={textMsg}
           onChange={(e) => setTextMsg(e.target.value)}
-          required
         />
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-blue-600 transition-all"
+          className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+          disabled={!textMsg.trim()}
         >
-          Send
-        </button>
+          <IoSend className="text-xl" />
+        </motion.button>
       </form>
     </div>
   );

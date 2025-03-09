@@ -1,16 +1,24 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Message = ({ ownMessage, message }) => {
   return (
-    <div className={`mb-3 ${ownMessage ? "text-right" : "text-left"}`}>
-      <span
-        className={`inline-block px-4 py-2 rounded-xl shadow-md max-w-xs break-words ${
-          ownMessage ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
-        }`}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`mb-3 ${ownMessage ? "text-right" : "text-left"}`}
+    >
+      <div
+        className={`inline-block max-w-[80%] md:max-w-[60%] rounded-2xl px-4 py-2 shadow-sm
+          ${
+            ownMessage
+              ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-br-none"
+              : "bg-white text-gray-800 rounded-bl-none"
+          }`}
       >
-        {message}
-      </span>
-    </div>
+        <p className="text-sm break-words">{message}</p>
+      </div>
+    </motion.div>
   );
 };
 

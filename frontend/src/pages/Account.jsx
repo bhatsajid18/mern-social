@@ -1,42 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext";
 import { PostData } from "../context/PostContext";
 import PostCard from "../components/PostCard";
-import { FaArrowDownLong, FaArrowUp, FaPlus } from "react-icons/fa6";
-import Modal from "../components/Modal";
-import axios from "axios";
-import { Loading } from "../components/Loading";
+import { FaPlus } from "react-icons/fa6";
 import { CiEdit } from "react-icons/ci";
-import toast from "react-hot-toast";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import Modal from "../components/Modal";
+import { Loading } from "../components/Loading";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Account = ({ user }) => {
-  const navigate = useNavigate();
   const { logoutUser, updateProfilePic, updateProfileName } = UserData();
   const { posts, reels, loading } = PostData();
-
-  let myPosts = posts
-    ? posts.filter((post) => post.owner._id === user._id)
-    : [];
-  let myReels = reels
-    ? reels.filter((reel) => reel.owner._id === user._id)
-    : [];
-
   const [type, setType] = useState("post");
   const [file, setFile] = useState(null);
-  const [name, setName] = useState(user.name || "");
+  const [name, setName] = useState(user?.name || "");
   const [showInput, setShowInput] = useState(false);
-
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
+  const [showUpdatePass, setShowUpdatePass] = useState(false);
   const [followersData, setFollowersData] = useState([]);
   const [followingsData, setFollowingsData] = useState([]);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  const myPosts = posts?.filter((post) => post.owner._id === user._id) || [];
+  const myReels = reels?.filter((reel) => reel.owner._id === user._id) || [];
 
   useEffect(() => {
     async function followData() {
       try {
-        const { data } = await axios.get("/api/user/followdata/" + user._id);
+        const { data } = await axios.get(`/api/user/followdata/${user._id}`);
         setFollowersData(data.followers);
         setFollowingsData(data.followings);
       } catch (error) {
@@ -45,10 +40,6 @@ const Account = ({ user }) => {
     }
     followData();
   }, [user]);
-
-  const changeFileHandler = (e) => {
-    setFile(e.target.files[0]);
-  };
 
   const updateProfileHandler = () => {
     if (file) {
@@ -61,14 +52,10 @@ const Account = ({ user }) => {
     }
   };
 
-  const [showUpdatePass, setShowUpdatePass] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-
   async function updatePassword(e) {
     e.preventDefault();
     try {
-      const { data } = await axios.post("/api/user/" + user._id, {
+      const { data } = await axios.post(`/api/user/${user._id}`, {
         oldPassword,
         newPassword,
       });
@@ -81,223 +68,203 @@ const Account = ({ user }) => {
     }
   }
 
+  if (loading) return <Loading />;
+
   return (
-    <div className="bg-gray-100 min-h-[110vh] flex flex-col gap-8 items-center py-12 px-4">
-      {loading ? (
-        <Loading />
-      ) : (
-        <>
-          {user && (
-            <>
-              <div
-                className={`bg-white flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl shadow-xl max-w-xl  md:max-w-3xl ${
-                  showInput ? "w-120" : "w-100"
-                }`}
+    <div className="bg-gray-50 min-h-screen ml-48 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Profile Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Profile Picture Section */}
+            <div className="relative">
+              <div className="w-48 h-48 rounded-full overflow-hidden ring-4 ring-gray-100 shadow-lg">
+                <img
+                  src={user?.profilePic.url}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <label
+                htmlFor="fileInput"
+                className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full cursor-pointer transition-colors shadow-md"
               >
-                {show && (
-                  <Modal
-                    value={followersData}
-                    title="Followers"
-                    setShow={setShow}
-                  />
-                )}
-                {show1 && (
-                  <Modal
-                    value={followingsData}
-                    title="Followings"
-                    setShow={setShow1}
-                  />
-                )}
+                <FaPlus />
+              </label>
+              <input
+                id="fileInput"
+                type="file"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+            </div>
 
-                <div className="relative flex flex-col items-center gap-4">
-                  <img
-                    src={user.profilePic.url}
-                    alt="Profile"
-                    className="w-36 h-36 rounded-full border-4 border-gray-300 shadow-md"
-                  />
-                  <label
-                    htmlFor="fileInput"
-                    className="absolute bottom-2 right-2 bg-gray-800 text-white p-2 rounded-full cursor-pointer"
-                  >
-                    <FaPlus />
-                  </label>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    className="hidden"
-                    onChange={changeFileHandler}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3 text-center md:text-left">
-                  {showInput ? (
-                    <div className="flex gap-3 items-center">
-                      <input
-                        className="border rounded-lg px-3 py-2"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter Name"
-                        required
-                      />
-                      {/* <button
-                        onClick={updateProfileHandler}
-                        className="bg-green-600 text-white px-3 py-1 rounded-lg"
-                      >
-                        Update
-                      </button> */}
-                      <button
-                        onClick={() => setShowInput(false)}
-                        // className="bg-red-500 text-white p-2 rounded-full"
-                      >
-                        {/* X */}
-                        <IoCloseCircleOutline />
-                      </button>
-                    </div>
-                  ) : (
-                    <p className="text-xl font-semibold">
-                      {user.name}{" "}
-                      <button onClick={() => setShowInput(true)}>
-                        <CiEdit />
-                      </button>
-                    </p>
-                  )}
-                  <p className="text-gray-700">{user.email}</p>
-                  {/* <p className="text-gray-700">{user.gender}</p> */}
-                  <p
-                    className="text-gray-700 cursor-pointer hover:text-blue-600"
-                    onClick={() => setShow(true)}
-                  >
-                    {user.followers.length} followers
-                  </p>
-                  <p
-                    className="text-gray-700 cursor-pointer hover:text-blue-600"
-                    onClick={() => setShow1(true)}
-                  >
-                    {user.followings.length} following
-                  </p>
-                  <button
-                    onClick={updateProfileHandler}
-                    className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
-                  >
-                    Update Profile
-                  </button>
-
-                  <button
-                    onClick={logoutUser}
-                    className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-
-              {/* <div>
-                <button
-                  onClick={() => setShowUpdatePass(!showUpdatePass)}
-                  className="bg-blue-500 px-2 py-1 rounded-sm text-white"
-                >
-                  {showUpdatePass ? "X" : "Update Password"}
-                </button>
-                {showUpdatePass && (
-                  <form
-                    onSubmit={updatePassword}
-                    className="flex flex-col bg-white p-2 rounded-sm gap-4"
-                  >
+            {/* Profile Info Section */}
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center gap-4">
+                {showInput ? (
+                  <div className="flex items-center gap-3">
                     <input
-                      type="password"
-                      placeholder="Old Password"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      required
+                      className="border-2 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter Name"
                     />
-                    <input
-                      type="password"
-                      placeholder="New Password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="bg-blue-500 px-2 py-1 rounded-sm text-white"
-                    >
-                      Update Password
+                    <button onClick={() => setShowInput(false)}>
+                      <IoCloseCircleOutline className="text-2xl text-gray-500 hover:text-gray-700" />
                     </button>
-                  </form>
-                )}
-              </div> */}
-
-              <div className="flex flex-col items-center justify-center p-4">
-                <button
-                  onClick={() => setShowUpdatePass(!showUpdatePass)}
-                  className="bg-blue-500 hover:bg-blue-600 transition-colors duration-300 px-4 py-2 rounded-md text-white font-medium shadow-md"
-                >
-                  {showUpdatePass ? "X" : "Update Password"}
-                </button>
-
-                {showUpdatePass && (
-                  <form
-                    onSubmit={updatePassword}
-                    className="flex flex-col bg-white p-4 mt-4 rounded-md shadow-lg border border-gray-200 w-80"
-                  >
-                    <input
-                      type="password"
-                      placeholder="Old Password"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      required
-                      className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-
-                    <input
-                      type="password"
-                      placeholder="New Password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                      className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 mt-2"
-                    />
-
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      {user?.name}
+                    </h2>
                     <button
-                      type="submit"
-                      className="bg-blue-500 hover:bg-blue-600 transition-all duration-300 px-4 py-2 rounded-md text-white font-medium mt-4 shadow-md"
+                      onClick={() => setShowInput(true)}
+                      className="text-gray-500 hover:text-gray-700"
                     >
-                      Update Password
+                      <CiEdit className="text-xl" />
                     </button>
-                  </form>
+                  </div>
                 )}
               </div>
 
-              <div className="controls flex justify-center items-center bg-white p-4 rounded-md gap-7">
-                <button onClick={() => setType("post")}>Posts</button>
-                <button onClick={() => setType("reel")}>Reels</button>
+              <p className="text-gray-600">{user?.email}</p>
+
+              <div className="flex gap-8">
+                <button
+                  onClick={() => setShow(true)}
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <span className="font-semibold">
+                    {user?.followers.length}
+                  </span>{" "}
+                  followers
+                </button>
+                <button
+                  onClick={() => setShow1(true)}
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <span className="font-semibold">
+                    {user?.followings.length}
+                  </span>{" "}
+                  following
+                </button>
               </div>
 
-              <div className="w-full max-w-xl">
-                {type === "post" &&
-                  (myPosts.length > 0 ? (
-                    myPosts.map((e) => (
-                      <PostCard type="post" value={e} key={e._id} />
-                    ))
-                  ) : (
-                    <p className="text-center text-gray-600 text-lg">
-                      No Post Yet
-                    </p>
-                  ))}
-                {type === "reel" &&
-                  (myReels.length > 0 ? (
-                    myReels.map((e) => (
-                      <PostCard type="reel" value={e} key={e._id} />
-                    ))
-                  ) : (
-                    <p className="text-center text-gray-600 text-lg">
-                      No Reels Yet
-                    </p>
-                  ))}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={updateProfileHandler}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                >
+                  Update Profile
+                </button>
+                <button
+                  onClick={logoutUser}
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                >
+                  Logout
+                </button>
               </div>
-            </>
+            </div>
+          </div>
+        </div>
+
+        {/* Password Update Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <button
+            onClick={() => setShowUpdatePass(!showUpdatePass)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+          >
+            {showUpdatePass ? "Cancel" : "Update Password"}
+          </button>
+
+          {showUpdatePass && (
+            <form onSubmit={updatePassword} className="mt-6 max-w-md">
+              <div className="space-y-4">
+                <input
+                  type="password"
+                  placeholder="Old Password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                >
+                  Update Password
+                </button>
+              </div>
+            </form>
           )}
-        </>
+        </div>
+
+        {/* Posts/Reels Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="flex justify-center gap-8 mb-8">
+            <button
+              onClick={() => setType("post")}
+              className={`px-6 py-2 rounded-lg transition-colors ${
+                type === "post"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
+              }`}
+            >
+              Posts
+            </button>
+            <button
+              onClick={() => setType("reel")}
+              className={`px-6 py-2 rounded-lg transition-colors ${
+                type === "reel"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
+              }`}
+            >
+              Reels
+            </button>
+          </div>
+
+          <div className="grid gap-6">
+            {type === "post" &&
+              (myPosts.length > 0 ? (
+                myPosts.map((post) => (
+                  <PostCard type="post" value={post} key={post._id} />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 text-lg">
+                  No posts yet
+                </p>
+              ))}
+            {type === "reel" &&
+              (myReels.length > 0 ? (
+                myReels.map((reel) => (
+                  <PostCard type="reel" value={reel} key={reel._id} />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 text-lg">
+                  No reels yet
+                </p>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Modals */}
+      {show && (
+        <Modal value={followersData} title="Followers" setShow={setShow} />
+      )}
+      {show1 && (
+        <Modal value={followingsData} title="Followings" setShow={setShow1} />
       )}
     </div>
   );
