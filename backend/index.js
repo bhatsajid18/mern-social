@@ -21,6 +21,7 @@ cloudinary.v2.config({
 app.use(express.json());
 app.use(cookieParser());
 
+
 const port = process.env.PORT;
 
 // to get all chats of user

@@ -12,6 +12,7 @@ import { Loading } from "./components/Loading";
 import UserAccount from "./pages/UserAccount";
 import Search from "./pages/Search";
 import ChatPage from "./pages/ChatPage";
+import ChatBot from "./components/bot/ChatBot";
 
 const App = () => {
   const { loading, isAuth, user } = UserData();
@@ -48,6 +49,7 @@ const App = () => {
               path="/chat"
               element={isAuth ? <ChatPage user={user} /> : <Login />}
             />
+            <Route path="chat/chatbot" element={<ChatBot />} />
           </Routes>
           {isAuth && <NavigationBar />}
         </BrowserRouter>

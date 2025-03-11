@@ -3,6 +3,8 @@ import { UserData } from "../../context/UserContext";
 import { BsSendCheck } from "react-icons/bs";
 import { motion } from "framer-motion";
 import { SocketData } from "../../context/SocketContext";
+import ChatBot from "../bot/ChatBot";
+import ChatAi from "../bot/ChatAi";
 
 const Chat = ({ chat, setSelectedChat }) => {
   const { user: loggedInUser } = UserData();
@@ -14,6 +16,7 @@ const Chat = ({ chat, setSelectedChat }) => {
   const isUserOnline = onlineUsers.includes(user._id);
 
   return (
+    <>
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -45,6 +48,10 @@ const Chat = ({ chat, setSelectedChat }) => {
         </div>
       </div>
     </motion.div>
+    <div>
+      <ChatAi/>
+    </div>
+    </>
   );
 };
 
