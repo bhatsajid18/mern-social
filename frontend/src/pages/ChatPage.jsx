@@ -7,6 +7,7 @@ import Chat from "../components/chat/Chat";
 import MessageContainer from "../components/chat/MessageContainer";
 import { SocketData } from "../context/SocketContext";
 import { motion, AnimatePresence } from "framer-motion";
+import ChatAi from "../components/bot/ChatAi";
 
 const ChatPage = ({ user }) => {
   const { createChat, selectedChat, setSelectedChat, chats, setChats } =
@@ -132,18 +133,24 @@ const ChatPage = ({ user }) => {
                       </p>
                     )
                   ) : chats.length > 0 ? (
-                    chats.map((chat) => (
-                      <Chat
-                        key={chat._id}
-                        chat={chat}
-                        setSelectedChat={setSelectedChat}
-                        isOnline={onlineUsers.includes(chat.users[0]._id)}
-                      />
-                    ))
+                    <>
+                      <ChatAi />
+                      {chats.map((chat) => (
+                        <Chat
+                          key={chat._id}
+                          chat={chat}
+                          setSelectedChat={setSelectedChat}
+                          isOnline={onlineUsers.includes(chat.users[0]._id)}
+                        />
+                      ))}
+                    </>
                   ) : (
-                    <p className="text-center text-gray-500 py-4">
-                      No chats yet
-                    </p>
+                    // <p className="text-center text-gray-500 py-4">
+                    //   No chats yet
+                    // </p>
+                    <div>
+                      <ChatAi />
+                    </div>
                   )}
                 </div>
               </div>

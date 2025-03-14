@@ -178,7 +178,7 @@ const PostCard = ({ type, value, isPlaying }) => {
               autoPlay
               controls
               loop
-              // muted
+              muted
             />
           )}
         </div>

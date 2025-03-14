@@ -87,7 +87,6 @@ const MessageContainer = ({ setSelectedChat, selectedChat, setChats }) => {
                 <h3 className="font-semibold text-gray-900">
                   {selectedChat.users[0].name}
                 </h3>
-                {/* <p className="text-sm text-gray-500">Online</p> */}
               </div>
             </div>
             <button
