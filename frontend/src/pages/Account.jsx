@@ -71,14 +71,14 @@ const Account = ({ user }) => {
   if (loading) return <Loading />;
 
   return (
-    <div className="bg-gray-50 min-h-screen ml-48 p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-gray-50 min-h-screen ml-0 sm:ml-0 md:ml-48 pt-16 sm:pt-16 md:pt-8 px-4 sm:px-6 md:px-8">
+      <div className="max-w-sm sm:max-w-2xl lg:max-w-4xl mx-auto">
         {/* Profile Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-12">
             {/* Profile Picture Section */}
             <div className="relative">
-              <div className="w-48 h-48 rounded-full overflow-hidden ring-4 ring-gray-100 shadow-lg">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-48 lg:h-48 rounded-full overflow-hidden ring-4 ring-gray-100 shadow-lg">
                 <img
                   src={user?.profilePic.url}
                   alt="Profile"
@@ -87,9 +87,9 @@ const Account = ({ user }) => {
               </div>
               <label
                 htmlFor="fileInput"
-                className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full cursor-pointer transition-colors shadow-md"
+                className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 text-white p-2 sm:p-2.5 lg:p-3 rounded-full cursor-pointer transition-colors shadow-md"
               >
-                <FaPlus />
+                <FaPlus className="text-xs sm:text-sm lg:text-base" />
               </label>
               <input
                 id="fileInput"
@@ -100,41 +100,43 @@ const Account = ({ user }) => {
             </div>
 
             {/* Profile Info Section */}
-            <div className="flex-1 space-y-4">
-              <div className="flex items-center gap-4">
+            <div className="flex-1 space-y-4 text-center lg:text-left">
+              <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
                 {showInput ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <input
-                      className="border-2 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                      className="w-full sm:w-auto border-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter Name"
                     />
                     <button onClick={() => setShowInput(false)}>
-                      <IoCloseCircleOutline className="text-2xl text-gray-500 hover:text-gray-700" />
+                      <IoCloseCircleOutline className="text-xl sm:text-2xl text-gray-500 hover:text-gray-700" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-gray-800">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">
                       {user?.name}
                     </h2>
                     <button
                       onClick={() => setShowInput(true)}
                       className="text-gray-500 hover:text-gray-700"
                     >
-                      <CiEdit className="text-xl" />
+                      <CiEdit className="text-lg sm:text-xl" />
                     </button>
                   </div>
                 )}
               </div>
 
-              <p className="text-gray-600">{user?.email}</p>
+              <p className="text-gray-600 text-sm sm:text-base">
+                {user?.email}
+              </p>
 
-              <div className="flex gap-8">
+              <div className="flex gap-4 sm:gap-6 lg:gap-8 justify-center lg:justify-start">
                 <button
                   onClick={() => setShow(true)}
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  className="text-gray-700 hover:text-blue-600 transition-colors text-sm sm:text-base"
                 >
                   <span className="font-semibold">
                     {user?.followers.length}
@@ -143,7 +145,7 @@ const Account = ({ user }) => {
                 </button>
                 <button
                   onClick={() => setShow1(true)}
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  className="text-gray-700 hover:text-blue-600 transition-colors text-sm sm:text-base"
                 >
                   <span className="font-semibold">
                     {user?.followings.length}
@@ -152,16 +154,16 @@ const Account = ({ user }) => {
                 </button>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                 <button
                   onClick={updateProfileHandler}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition-colors shadow-md text-sm sm:text-base"
                 >
                   Update Profile
                 </button>
                 <button
                   onClick={logoutUser}
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                  className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg transition-colors shadow-md text-sm sm:text-base"
                 >
                   Logout
                 </button>
@@ -171,24 +173,24 @@ const Account = ({ user }) => {
         </div>
 
         {/* Password Update Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 mb-6 sm:mb-8">
           <button
             onClick={() => setShowUpdatePass(!showUpdatePass)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition-colors shadow-md text-sm sm:text-base"
           >
             {showUpdatePass ? "Cancel" : "Update Password"}
           </button>
 
           {showUpdatePass && (
-            <form onSubmit={updatePassword} className="mt-6 max-w-md">
-              <div className="space-y-4">
+            <form onSubmit={updatePassword} className="mt-4 sm:mt-6 max-w-md">
+              <div className="space-y-3 sm:space-y-4">
                 <input
                   type="password"
                   placeholder="Old Password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 sm:px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                 />
                 <input
                   type="password"
@@ -196,11 +198,11 @@ const Account = ({ user }) => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 sm:px-4 py-2 border-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                 />
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-md"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition-colors shadow-md text-sm sm:text-base"
                 >
                   Update Password
                 </button>
@@ -210,11 +212,11 @@ const Account = ({ user }) => {
         </div>
 
         {/* Posts/Reels Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="flex justify-center gap-8 mb-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
+          <div className="flex justify-center gap-4 sm:gap-6 mb-6 sm:mb-8">
             <button
               onClick={() => setType("post")}
-              className={`px-6 py-2 rounded-lg transition-colors ${
+              className={`px-4 sm:px-6 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 type === "post"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 hover:bg-gray-200"
@@ -224,7 +226,7 @@ const Account = ({ user }) => {
             </button>
             <button
               onClick={() => setType("reel")}
-              className={`px-6 py-2 rounded-lg transition-colors ${
+              className={`px-4 sm:px-6 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 type === "reel"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 hover:bg-gray-200"
@@ -234,24 +236,28 @@ const Account = ({ user }) => {
             </button>
           </div>
 
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {type === "post" &&
               (myPosts.length > 0 ? (
                 myPosts.map((post) => (
-                  <PostCard type="post" value={post} key={post._id} />
+                  <div key={post._id} className="aspect-square">
+                    <PostCard type="post" value={post} />
+                  </div>
                 ))
               ) : (
-                <p className="text-center text-gray-500 text-lg">
+                <p className="col-span-full text-center text-gray-500 text-sm sm:text-base lg:text-lg">
                   No posts yet
                 </p>
               ))}
             {type === "reel" &&
               (myReels.length > 0 ? (
                 myReels.map((reel) => (
-                  <PostCard type="reel" value={reel} key={reel._id} />
+                  <div key={reel._id} className="aspect-square">
+                    <PostCard type="reel" value={reel} />
+                  </div>
                 ))
               ) : (
-                <p className="text-center text-gray-500 text-lg">
+                <p className="col-span-full text-center text-gray-500 text-sm sm:text-base lg:text-lg">
                   No reels yet
                 </p>
               ))}

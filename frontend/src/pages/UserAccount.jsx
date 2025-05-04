@@ -52,22 +52,28 @@ const UserAccount = ({ user: loggedInUser }) => {
 
   const [type, setType] = useState("post");
 
-  const [index, setIndex] = useState(0);
+  const [activeReelId, setActiveReelId] = useState(null);
 
-  const prevReel = () => {
-    if (index === 0) {
-      console.log("null");
-      return null;
+  useEffect(() => {
+    if (type === "reel" && myReels?.length > 0) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveReelId(entry.target.dataset.reelId);
+            }
+          });
+        },
+        { threshold: 0.7 }
+      );
+
+      document.querySelectorAll(".reel-container").forEach((el) => {
+        observer.observe(el);
+      });
+
+      return () => observer.disconnect();
     }
-    setIndex(index - 1);
-  };
-  const nextReel = () => {
-    if (index === myReels.length - 1) {
-      console.log("null");
-      return null;
-    }
-    setIndex(index + 1);
-  };
+  }, [type, myReels]);
 
   const [followed, setFollowed] = useState(false);
 
@@ -242,30 +248,30 @@ const UserAccount = ({ user: loggedInUser }) => {
               ) : (
                 <div className="flex justify-center">
                   {myReels && myReels.length > 0 ? (
-                    <div className="flex items-center gap-4 md:gap-6">
-                      <PostCard type="reel" value={myReels[index]} />
-                      <div className="flex flex-col gap-4">
-                        {index > 0 && (
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={prevReel}
-                            className="p-3 md:p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all"
+                    <div className="w-full max-w-md h-[80vh] overflow-y-auto snap-y snap-mandatory scrollbar-hide">
+                      {myReels.map((reel) => (
+                        <div
+                          key={reel._id}
+                          data-reel-id={reel._id}
+                          className="reel-container snap-start h-[80vh] flex items-center justify-center mb-4 last:mb-0"
+                        >
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{
+                              opacity: 1,
+                              scale: activeReelId === reel._id ? 1 : 0.95,
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full h-full relative rounded-2xl overflow-hidden shadow-xl"
                           >
-                            <FaArrowUp className="text-gray-700" />
-                          </motion.button>
-                        )}
-                        {index < myReels.length - 1 && (
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={nextReel}
-                            className="p-3 md:p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all"
-                          >
-                            <FaArrowDownLong className="text-gray-700" />
-                          </motion.button>
-                        )}
-                      </div>
+                            <PostCard
+                              type="reel"
+                              value={reel}
+                              isPlaying={activeReelId === reel._id}
+                            />
+                          </motion.div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="text-center py-8 md:py-12 bg-white rounded-xl md:rounded-2xl shadow-lg w-full max-w-md">
