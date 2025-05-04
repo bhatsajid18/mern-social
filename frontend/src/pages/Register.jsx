@@ -46,7 +46,7 @@ const Register = () => {
         <h1>Loading....</h1>
       ) : (
         <div className="bg-white p-8 rounded-md shadow-md w-[350px]">
-          <h1 className="text-center text-3xl font-bold mb-6">Snapgram</h1>
+          <h1 className="text-center text-3xl font-bold mb-6">Chime</h1>
           <form onSubmit={submitHandler} className="flex flex-col space-y-4">
             {filePrev && (
               <img
