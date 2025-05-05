@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { ChatData } from "../../context/ChatContext";
 import toast from "react-hot-toast";
 import axios from "axios";
-const MessageInput = ({ setMessages, selectedChat }) => {
-  const [textMsg, setTextMsg] = useState("");
+
+const MessageInput = ({ setMessages, selectedChat, textMsg, setTextMsg }) => {
   const { setChats } = ChatData();
 
   const handleMessage = async (e) => {
     e.preventDefault();
+    if (!textMsg.trim()) return; // Add validation
+
     try {
       const { data } = await axios.post("/api/messages", {
         message: textMsg,
@@ -15,7 +17,7 @@ const MessageInput = ({ setMessages, selectedChat }) => {
       });
 
       setMessages((message) => [...message, data]);
-      setTextMsg("");
+      setTextMsg(""); // Clear input after sending
       setChats((prev) => {
         const updatedChat = prev.map((chat) => {
           if (chat._id === selectedChat._id) {
@@ -27,10 +29,8 @@ const MessageInput = ({ setMessages, selectedChat }) => {
               },
             };
           }
-
           return chat;
         });
-
         return updatedChat;
       });
     } catch (error) {

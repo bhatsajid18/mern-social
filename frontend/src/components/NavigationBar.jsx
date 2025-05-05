@@ -50,7 +50,11 @@ const NavigationBar = () => {
       {/* Desktop Navigation - Left Sidebar */}
       <div className="hidden md:block fixed left-0 top-0 h-full w-48 bg-white shadow-lg">
         <div className="p-6 flex flex-col h-full">
-          <h1 className="text-xl font-bold text-gray-800 mb-8">Navigation</h1>
+   
+        <div className="flex items-center mb-8">
+  <img src="/public/chime.jpg" alt="Chime Logo" className="w-8 h-8  rounded-full shadow mr-2" />
+  <h1 className="text-xl font-bold text-gray-800">Chime</h1>
+</div>
           <div className="flex flex-col space-y-2">
             {navItems.map((item) => (
               <Link
