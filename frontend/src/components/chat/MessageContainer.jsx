@@ -113,7 +113,7 @@ const MessageContainer = ({ setSelectedChat, selectedChat, setChats }) => {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 mt-16 md:mt-[72px] mb-[76px] md:mb-[68px]">
+          <div className="overflow-y-auto flex-1 mt-16 md:mt-[72px] mb-[88px] md:mb-[68px]">
             {loading ? (
               <div className="flex-1 flex items-center justify-center h-full">
                 <LoadingAnimation />
@@ -121,7 +121,7 @@ const MessageContainer = ({ setSelectedChat, selectedChat, setChats }) => {
             ) : (
               <div
                 ref={messageContainerRef}
-                className="h-full overflow-y-auto space-y-2 px-2 sm:px-4 py-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+                className="h-full overflow-y-auto space-y-2 px-2 sm:px-4 py-3 scrollbar-none"
               >
                 {messages.map((message, index) => (
                   <Message
@@ -136,7 +136,7 @@ const MessageContainer = ({ setSelectedChat, selectedChat, setChats }) => {
           </div>
 
           {/* Input Area */}
-          <div className="fixed bottom-16 md:bottom-0 left-0 md:left-48 right-0 bg-white border-t shadow-lg">
+          <div className="fixed bottom-16 md:bottom-0 left-0 md:left-48 right-0 bg-white border-t shadow-lg mb-2">
             <MessageInput
               setMessages={setMessages}
               selectedChat={selectedChat}
